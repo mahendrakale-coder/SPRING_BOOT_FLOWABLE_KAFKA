@@ -1,0 +1,12 @@
+{
+  "key": "loanEvent",
+  "name": "Loan Event",
+  "payload": {
+    "loanId": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  }
+}
