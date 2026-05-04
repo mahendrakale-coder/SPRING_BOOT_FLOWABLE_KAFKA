@@ -1,8 +1,0 @@
-{
-  "key": "kafkaLoanChannel",
-  "name": "Kafka Loan Channel",
-  "type": "kafka",
-  "topic": "loan-events",
-  "deserializerType": "json",
-  "serializerType": "json"
-}
