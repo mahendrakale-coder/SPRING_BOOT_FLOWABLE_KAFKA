@@ -68,6 +68,11 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-webflux</artifactId>
 </dependency>
+<dependency>
+    <groupId>org.flowable</groupId>
+    <artifactId>flowable-event-registry-spring</artifactId>
+    <version>8.0.0</version>
+</dependency>
 
     </dependencies>
 <build>
