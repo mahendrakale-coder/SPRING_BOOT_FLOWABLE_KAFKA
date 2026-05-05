@@ -4,20 +4,28 @@ import org.flowable.engine.ProcessEngine;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import com.example.flowable.kafka.KafkaPublisher;
+//import com.example.flowable.kafka.KafkaPublisher;
+import com.example.flowable.kafka.EventQueueService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class FlowableStartupListener {
 
     private final ProcessEngine processEngine;
-    private final KafkaPublisher kafkaPublisher;
+    //private final KafkaPublisher kafkaPublisher;
+	
+	@Autowired
+	private EventQueueService queueService;
 
-    public FlowableStartupListener(ProcessEngine processEngine,
+    /*public FlowableStartupListener(ProcessEngine processEngine,
                                    KafkaPublisher kafkaPublisher) {
         this.processEngine = processEngine;
         this.kafkaPublisher = kafkaPublisher;
-    }
+    }*/
 
+	public FlowableStartupListener(ProcessEngine processEngine) {
+        this.processEngine = processEngine;
+    }
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
 
@@ -57,8 +65,8 @@ public class FlowableStartupListener {
 		
         String eventJson = "{\"eventType\": \"FLOWABLE_ENGINE_STARTED\",\"engineName\": \"%s\",\"processDefinitions\": %d,\"status\": \"READY\"}".formatted(engineName, processCount);
 
-        kafkaPublisher.publish("loan-events", eventJson);
-
+        //kafkaPublisher.publish("loan-events", eventJson);
+		queueService.publish(eventJson);
     }
 
     private void initializeApplicationWorkflows() {

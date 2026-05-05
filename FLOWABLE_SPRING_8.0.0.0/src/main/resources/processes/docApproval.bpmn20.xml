@@ -3,28 +3,34 @@
              xmlns:flowable="http://flowable.org/bpmn"
              targetNamespace="Examples">
 
+    <!-- ✅ ADD THIS -->
+    <message id="loanApprovedMessage" name="loanApprovedMessage"/>
+
     <process id="docApproval" name="Document Approval Process" isExecutable="true">
 
-        <startEvent id="startEvent" />
+        <startEvent id="startEvent"/>
 
-        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="userTask1"/>
+        <sequenceFlow sourceRef="startEvent" targetRef="userTask1"/>
 
         <userTask id="userTask1"
                   name="Approve Document"
-                  flowable:assignee="john" />
+                  flowable:assignee="john"/>
 
-        <sequenceFlow id="flow2" sourceRef="userTask1" targetRef="sendKafkaEvent"/>
+        <sequenceFlow sourceRef="userTask1" targetRef="sendKafkaEvent"/>
 
-        <!-- ✅ REPLACED SERVICE TASK -->
         <serviceTask id="sendKafkaEvent"
                      name="Send Kafka Event"
-                     flowable:type="send-event"
-                     flowable:eventType="loanEvent"
-                     flowable:channelKey="kafkaLoanChannel" />
+                     flowable:delegateExpression="${kafkaSendDelegate}"/>
 
-        <sequenceFlow id="flow3" sourceRef="sendKafkaEvent" targetRef="endEvent"/>
+        <sequenceFlow sourceRef="sendKafkaEvent" targetRef="waitKafka"/>
 
-        <endEvent id="endEvent" />
+        <intermediateCatchEvent id="waitKafka">
+            <messageEventDefinition messageRef="loanApprovedMessage"/>
+        </intermediateCatchEvent>
+
+        <sequenceFlow sourceRef="waitKafka" targetRef="endEvent"/>
+
+        <endEvent id="endEvent"/>
 
     </process>
 </definitions>
